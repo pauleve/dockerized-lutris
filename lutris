@@ -7,7 +7,7 @@ name=lutris_running
 cmd=$defaultcmd
 opts=()
 data="lutris-data-$USER"
-do_sound=false
+do_sound=true
 do_update=false
 
 local_data="$HOME/.local/share/lutris"
@@ -176,6 +176,8 @@ if [ -n "${name}" ]; then
 fi
 
 opts+=("--device=/dev/dri:/dev/dri")
+opts+=("--device=/dev/snd:/dev/snd")
+opts+=("--group-add=18")
 
 
 dri_card="/dev/dri/card0"

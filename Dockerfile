@@ -1,19 +1,25 @@
-FROM archlinux/base:latest as lutris
+FROM ubuntu:rolling
 
-RUN \
-  pacman -Syy --noconfirm && \
-  pacman -S --noconfirm lutris
-RUN \
-  echo [multilib] >> /etc/pacman.conf && \
-  echo Include = /etc/pacman.d/mirrorlist >> /etc/pacman.conf
-RUN \
-  pacman -Syy --noconfirm && \
-  pacman -S --noconfirm nvidia nvidia-utils lib32-nvidia-utils nvidia-settings lib32-mesa vulkan-icd-loader lib32-vulkan-icd-loader vulkan-intel lib32-vulkan-intel vulkan-icd-loader lib32-vulkan-icd-loader
-RUN pacman -S --noconfirm iputils p7zip winetricks wine steam pciutils firefox sdl procps-ng
 RUN useradd -m user
-
-USER user
-ENV USER=user
 VOLUME /home/user
-
 CMD ["lutris"]
+
+RUN apt update
+
+RUN apt install -y software-properties-common && apt clean -y
+
+RUN add-apt-repository ppa:lutris-team/lutris
+
+ENV DEBIAN_FRONTEND=noninteractive
+RUN apt install -y lutris && apt clean -y
+
+RUN dpkg --add-architecture i386 && apt-get update
+RUN apt-get install -y wine32 && apt clean -y
+RUN apt install -y dxvk && apt clean -y
+RUN apt install -y xterm && apt clean -y
+
+ENV USER=user
+USER user
+
+CMD ["/usr/games/lutris"]
+
